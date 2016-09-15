@@ -7,14 +7,30 @@
     </head>
     <body>
         <div id="element"></div>
-        <script type="text/template" id="blabla">
+        <script type="text/template" id="register">
             <form class="page">
-                Email: <input type="email" name="email"></br>
-                Password: <input type="password" name="password"></br>
-                <button type="button" class="submitButton">sign up</button>
+                Name: <input type="text" name="name" placeholder="Full Name"></br>
+                Email: <input type="email" name="email" placeholder="example@example.com"></br>
+                Password: <input type="password" name="password" placeholder="*********"></br>
+                <button type="button" class="submitButton">Join Us</button>
+            </form>
+        </script>
+        <script type="text/template" id="logIn">
+            <form class="page">
+                Email: <input type="email" name="email" laceholder="example@example.com"></br>
+                Password: <input type="password" name="password" placeholder="*********"></br>
+                <button type="button" class="submitButton">log In</button>
             </form>
         </script>
         <script>
+        var RegModel = Backbone.Model.extend({
+            url: '/register'
+        });
+
+        var LogModel = Backbone.Model.extend({
+            url: '/logIn'
+        });
+
         var RegistrationView = Backbone.View.extend({
             initialize: function() {
                 var view = this;
@@ -22,22 +38,57 @@
             },
             render: function() {
                 console.log('rendering')
-                this.$el.html($('#blabla').html());
+                this.$el.html($('#register').html());
             },
             events: {
                 'click .submitButton': function() {
-                    this.model.save({"email": this.el.childNodes[1][0].value, "password": this.el.childNodes[1][1].value});
+                    this.model.save({"name": this.el.childNodes[1][0].value, "email": this.el.childNodes[1][1].value, "password": this.el.childNodes[1][2].value});
                 }
             },
             el: '#element'
         });
 
-        var RegModel = Backbone.Model.extend({
-            url: '/register'
+        var LogView = Backbone.View.extend({
+            initialize: function() {
+                console.log('loggin');
+                this.render();
+            },
+            render: function() {
+                this.$el.html($('#logIn').html());
+            },
+            events: {
+                'click .submitButton': function() {
+                    this.model.save({"email": this.el.childNodes[1][0].value, "password": this.el.childNodes[1][1].value},{
+                     success: function(model, response, options) {
+                         console.log('model   ' + model);
+                         console.log('response ' + response);
+                         console.log('options    = ' + options);
+                        }
+                    })
+                },
+            },
+            el: '#element'
         });
 
-        var regModel = new RegModel();
-        var user = new RegistrationView({model: regModel});
+
+        var Router = Backbone.Router.extend({
+            routes: {
+                'register': 'register',
+                'logIn': 'logIn'
+            },
+            register: function() {
+                var regModel = new RegModel();
+                var user = new RegistrationView({model: regModel});
+            },
+            logIn: function() {
+                var logModel = new LogModel();
+                var user = new LogView({model: logModel});
+            }
+        });
+
+        var router = new Router;
+
+        Backbone.history.start();
 
         </script>
     </body>

@@ -46,12 +46,14 @@ app.use(bodyParser.json())
 
 app.use(staticProjects);
 
-app.get('/users', function(req, res) {
-    res.json('fdfd');
+app.post('/logIn', function(req, res) {
+    console.log(req.body)
+    res.json('welcome again')
 });
 
 app.post('/register', function(req, res) {
     console.log(req.body);
+    res.json('register')
 });
 /*
 app.post('/filter', function(req, res) {
