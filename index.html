@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        <script src="http://underscorejs.org/underscore-min.js"></script>
+        <script src="http://backbonejs.org/backbone-min.js"></script>
+    </head>
+    <body>
+        <div id="element"></div>
+        <script type="text/template" id="blabla">
+            <form class="page">
+                Email: <input type="email" name="email"></br>
+                Password: <input type="password" name="password"></br>
+                <button type="button" class="submitButton">sign up</button>
+            </form>
+        </script>
+        <script>
+        var RegistrationView = Backbone.View.extend({
+            initialize: function() {
+                var view = this;
+                this.render();
+            },
+            render: function() {
+                console.log('rendering')
+                this.$el.html($('#blabla').html());
+            },
+            events: {
+                'click .submitButton': function() {
+                    this.model.save({"email": this.el.childNodes[1][0].value, "password": this.el.childNodes[1][1].value});
+                }
+            },
+            el: '#element'
+        });
+
+        var RegModel = Backbone.Model.extend({
+            url: '/register'
+        });
+
+        var regModel = new RegModel();
+        var user = new RegistrationView({model: regModel});
+
+        </script>
+    </body>
+
+</html>
