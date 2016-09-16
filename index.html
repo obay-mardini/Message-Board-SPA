@@ -4,9 +4,27 @@
         <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
         <script src="http://underscorejs.org/underscore-min.js"></script>
         <script src="http://backbonejs.org/backbone-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
     </head>
     <body>
         <div id="element"></div>
+        <script type="text/handlebars" id="table">
+                <table>
+                    <tr>
+                        <th>id</th>
+                        <th>msg</th>
+
+                    </tr>
+                    {{#data}}
+                    <tr>
+                        <td>{{id}}</td>
+                        <td>{{msg}}</td>
+
+                    </tr>
+                    {{/data}}
+                </table>
+            </div>
+        </script>
         <script type="text/template" id="register">
             <form class="page">
                 Name: <input type="text" name="name" placeholder="Full Name"></br>
@@ -22,15 +40,26 @@
                 <button type="button" class="submitButton">log In</button>
             </form>
         </script>
+        <script type="text/template" id="messages">
+            <form class="page">
+                message: <textarea maxlength='250' name="message" id="textMessage" laceholder="please text me, it should not be longer than 255 characters">
+                </textarea>
+                <button type="button" class="sendMessage">log In</button>
+            </form>
+        </script>
         <script>
         var RegModel = Backbone.Model.extend({
             url: '/register'
         });
-
+        //models manage the data and logic of the applicaton
         var LogModel = Backbone.Model.extend({
             url: '/logIn'
         });
 
+        var MsgModel = Backbone.Model.extend({
+            url: '/msgIn'
+        });
+        //view present the data and respond to changes in IT
         var RegistrationView = Backbone.View.extend({
             initialize: function() {
                 var view = this;
@@ -60,9 +89,7 @@
                 'click .submitButton': function() {
                     this.model.save({"email": this.el.childNodes[1][0].value, "password": this.el.childNodes[1][1].value},{
                      success: function(model, response, options) {
-                         console.log('model   ' + model);
-                         console.log('response ' + response);
-                         console.log('options    = ' + options);
+
                         }
                     })
                 },
@@ -70,11 +97,45 @@
             el: '#element'
         });
 
+        var MessagesView = Backbone.View.extend({
+
+            initialize: function() {
+                console.log('messages');
+                this.render();
+            },
+            render: function() {
+                this.$el.html($('#messages').html());
+            },
+            events: {
+                'click .sendMessage': function() {
+                    var that = this;
+                    this.model.save({"message": $('#textMessage').val()},{
+                     success: function(model, response, options) {
+
+                         console.log('your message have been saved !!');
+                         var templates = document.querySelectorAll('script[type="text/handlebars"]');
+                         Handlebars.templates = Handlebars.templates || {};
+                         Array.prototype.slice.call(templates).forEach(function(script) {
+                             if(Handlebars.templates[script.id]){$("table" ).remove();}
+                        Handlebars.templates[script.id] = Handlebars.compile(script.innerHTML);
+                    });
+                    console.log(response)
+                    that.$el.append(Handlebars.templates.table({ data:  response}));
+                     },
+                     error: function(err){
+                         console.log(err)
+                     }
+                    })
+                },
+            },
+            el: '#element'
+        });
 
         var Router = Backbone.Router.extend({
             routes: {
                 'register': 'register',
-                'logIn': 'logIn'
+                'logIn': 'logIn',
+                'messages': 'messages'
             },
             register: function() {
                 var regModel = new RegModel();
@@ -83,6 +144,10 @@
             logIn: function() {
                 var logModel = new LogModel();
                 var user = new LogView({model: logModel});
+            },
+            messages: function() {
+                var msgModel = new MsgModel();
+                var msg = new MessagesView({model: msgModel});
             }
         });
 

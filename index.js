@@ -8,7 +8,7 @@ var str = 'postgres://test:12345@localhost:5432/users';
 var bodyParser = require('body-parser');
 //var cookiesParser = require('cookie-parser');
 var hb = require('express-handlebars');
-//var queryDB = require('./queryDB');
+var queryDB = require('./queryDB');
 var redis = require('redis');
 var clientRE = redis.createClient({
   host: 'localhost',
@@ -40,20 +40,36 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 */
+/*
+app.use(bodyParser.urlencoded({
+  extended: false
+}));*/
 app.use(bodyParser.json())
-
+//app.use(bodyParser.json())
+//app.use(bodyParser.raw())
 //app.use(cookiesParser());
 
 app.use(staticProjects);
 
 app.post('/logIn', function(req, res) {
     console.log(req.body)
-    res.json('welcome again')
+    res.json()
 });
 
 app.post('/register', function(req, res) {
     console.log(req.body);
     res.json('register')
+});
+
+app.post('/msgIn', function(req, res) {
+    queryDB.addMsg(req.body.message).then(function() {
+        return queryDB.constructUsersTable('messages')
+    }).then(function(val) {
+        res.json(val.rows)
+    }).catch(function(err) {
+        console.log(err)
+    });
+
 });
 /*
 app.post('/filter', function(req, res) {

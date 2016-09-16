@@ -1,0 +1,9 @@
+<div id="container">
+    <form action="/editProfile" method="post">
+        Email: <input type="email" name="email"></br>
+        Password: <input type="password" name="password"></br>
+        {{>profileData}}
+        <input type="submit"></input>
+    </form>
+    <p>{{message}}
+</div>

@@ -1,0 +1,48 @@
+<div id="container">
+    <form action="/filter" method="post">
+        City:
+        <select name="city">
+            <option value=""></option>
+            {{#city}}
+            <option value={{.}}>{{.}}</option>
+            {{/city}}
+        </select>
+        Color:
+        <select name="color">
+            <option value=""></option>
+            {{#color}}
+            <option value={{.}}>{{.}}</option>
+            {{/color}}
+        </select>
+        Age:
+        <select name="age">
+            <option value=""></option>
+            {{#age}}
+            <option value={{.}}>{{.}}</option>
+            {{/age}}
+        </select>
+        <input type="submit" value='Filter'></input>
+    </form>
+    <div>
+        <button class="leftLi"><a href="/editProfile">edit your profile</a></button>
+        <button class="leftLi"><a href="/showTable">Our Users</a></button>
+    <div>
+    <table>
+        <tr>
+            <th>name</th>
+            <th>age</th>
+            <th>city</th>
+            <th>url</th>
+            <th>color</th>
+        </tr>
+        {{#data}}
+        <tr>
+            <td>{{firstname}}</td>
+            <td>{{age}}</td>
+            <td>{{city}}</td>
+            <td>{{url}}</td>
+            <td>{{color}}</td>
+        </tr>
+        {{/data}}
+    </table>
+</div>
