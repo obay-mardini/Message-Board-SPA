@@ -62,7 +62,7 @@ app.post('/register', function(req, res) {
 });
 
 app.post('/msgIn', function(req, res) {
-    queryDB.addMsg(req.body.message).then(function() {
+    queryDB.addMsg(req.body.message, req.body.date).then(function() {
         return queryDB.constructUsersTable('messages')
     }).then(function(val) {
         res.json(val.rows)

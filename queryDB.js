@@ -235,7 +235,7 @@ function constructUsersTable(tableName) {
     });
 }
 
-function addMsg(msg){
+function addMsg(msg, date){
     var client = new pg.Client(str);
     client.connect();
     client.on('error', function(err){
@@ -244,9 +244,9 @@ function addMsg(msg){
     client.on('end', function(res){
         //console.log(res)
     });
-    var query = 'INSERT INTO messages (msg) VALUES ($1) returning *;'
+    var query = 'INSERT INTO messages (msg, date) VALUES ($1, $2) returning *;'
     return new Promise(function(resolve, reject){
-        client.query(query,[msg], function(err, results) {
+        client.query(query,[msg, date], function(err, results) {
             resolve(results)
             console.log(results)
             client.end();
